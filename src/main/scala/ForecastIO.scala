@@ -17,20 +17,29 @@ class ForecastIO(apiKey: String, lat: String, lon: String, date: Date = new Date
 
   private def getForecast = {
     val ts = date.getTime / 1000
-    val u = new URL(s"https://api.forecast.io/forecast/$apiKey/$lat,$lon,$ts")
+    val u = {
+      if (date == new Date()) new URL(s"https://api.forecast.io/forecast/$apiKey/$lat,$lon")
+      else new URL(s"https://api.forecast.io/forecast/$apiKey/$lat,$lon,$ts")
+    }
     val s = new Scanner(u.openStream(), "UTF-8")
     try {
-      s.useDelimiter("\\A").next().asJson
+      val j = s.useDelimiter("\\A").next().asJson
+      println(j)
+      j
+    } catch {
+      case e: Exception => throw new Exception(e.getMessage)
     } finally {
       s.close()
     }
   }
 
-  def latitude = lat
+  def latitude: String = lat
 
-  def longitude = lon
+  def longitude: String = lon
 
-  def datetime = date
+  def datetime: Date = date
+
+  def time: Int = { date.getTime / 1000 }.asInstanceOf[Int]
 
   def timezone: String = {
     forecastJson.getFields("timezone")(0).convertTo[String]

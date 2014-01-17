@@ -19,10 +19,10 @@ class Flags(json: JsonObject) {
     v.asArray.values.toArray.map(x => x.toString)
 
   def sources: Array[String] = asStringArray( json.get("sources") )
-  def isdStations: Array[String] = asStringArray( json.get("isd-stations") )
-  def lampStations: Array[String] = asStringArray( json.get("lamp-stations") )
-  def madisStations: Array[String] = asStringArray( json.get("madis-stations") )
-  def darkskyStations: Array[String] = asStringArray( json.get("darksky-stations") )
+  def stations(source: String): Array[String] = {
+    try asStringArray( json.get(s"$source-stations") )
+    catch { case e: Exception => Array() }
+  }
   def units: String = json.get("units").asString
 }
 
@@ -30,8 +30,8 @@ case class CurrentDataPoint(
   time: Int,
   summary: String ,
   icon: String ,
-  nearestStormDistance: Double = -1,
-  nearestStormBearing: Double = -1,
+  nearestStormDistance: Option[Double],
+  nearestStormBearing: Option[Double],
   precipIntensity: Double,
   precipProbability: Double,
   temperature: Double,
@@ -43,7 +43,7 @@ case class CurrentDataPoint(
   visibility: Double,
   cloudCover: Double,
   pressure: Double,
-  ozone: Double) extends DT { def datetime = new Date(time * 1000L) }
+  ozone: Option[Double]) extends DT { def datetime = new Date(time * 1000L) }
 
 case class HourDataPoint(
   time: Int,
@@ -72,8 +72,12 @@ case class Hourly(
   Why is this so ugly? Because case class limits of 22, that's why!
  */
 class Daily(json: JsonObject) {
-  def summary: String = json.get("summary").asString
-  def icon: String  = json.get("icon").asString
+  def summary: String =
+    try json.get("summary").asString
+    catch { case e: Exception => "" }
+  def icon: String  =
+    try json.get("icon").asString
+    catch { case e: Exception => "" }
   def data: Array[DayDataPoint] = {
     val data = json.get("data").asArray.values.toArray
     data.map(x => new DayDataPoint(x.asInstanceOf[JsonValue].asObject))
