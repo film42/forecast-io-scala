@@ -7,7 +7,26 @@ import spray.json._
 import model.ForecastJsonProtocol._
 import model._
 
-class ForecastIO(apiKey: String, lat: String, lon: String, date: Date = new Date()) {
+object ForecastIO {
+
+  var apiKey: String = ""
+
+  def forecast(apiKey: String, lat: String, lon: String, date: Date = new Date()): Option[Forecast] = {
+    try Some(new Forecast(apiKey, lat, lon))
+    catch { case e: Exception => None }
+  }
+
+  def forecast(lat: String, lon: String, date: Date): Option[Forecast] = {
+    forecast(apiKey, lat, lon, date)
+  }
+
+  def forecast(lat: String, lon: String): Option[Forecast] = {
+    forecast(apiKey, lat, lon)
+  }
+
+}
+
+class Forecast(apiKey: String, lat: String, lon: String, date: Date = new Date()) {
 
   // Timestamp constructor
   def this(apiKey: String, lat: String, lon: String, timestamp: Int) =
@@ -23,9 +42,7 @@ class ForecastIO(apiKey: String, lat: String, lon: String, date: Date = new Date
     }
     val s = new Scanner(u.openStream(), "UTF-8")
     try {
-      val j = s.useDelimiter("\\A").next().asJson
-      println(j)
-      j
+      s.useDelimiter("\\A").next().asJson
     } catch {
       case e: Exception => throw new Exception(e.getMessage)
     } finally {
