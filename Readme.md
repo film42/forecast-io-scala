@@ -6,9 +6,7 @@ I know there are at least two Java wrappers, but this will feel cleaner to anyon
 Quick Example:
 
 ```scala
-
 val forecast = new ForecastIO(apiKey, lon, lat)
 
 forecast.currently.summary //=> "Overcast"
-
 ```
