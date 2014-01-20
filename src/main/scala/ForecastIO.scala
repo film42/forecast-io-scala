@@ -12,7 +12,7 @@ import com.film42.forecastioapi.extras.LocationPoint
 case class ForecastIO(apiKey: String, units: String = "us") {
 
   def forecast(apiKey: String, lat: String, lon: String, date: Date = new Date()): Try[Forecast] = {
-    Try( new Forecast(apiKey, lat, lon, units) )
+    Try( new Forecast(apiKey, lat, lon, units, date) )
   }
 
   def forecast(lat: String, lon: String, date: Date): Try[Forecast] = {
@@ -27,9 +27,13 @@ case class ForecastIO(apiKey: String, units: String = "us") {
     forecast(apiKey, location.lat, location.lon)
   }
 
+  def forecast(location: LocationPoint, date: Date): Try[Forecast] = {
+    forecast(apiKey, location.lat, location.lon, date)
+  }
+
 }
 
-class Forecast(apiKey: String, lat: String, lon: String, units: String, date: Date = new Date()) {
+class Forecast(apiKey: String, lat: String, lon: String, units: String, date: Date) {
 
   // Timestamp constructor
   def this(apiKey: String, lat: String, lon: String, units: String, timestamp: Int) =
@@ -38,7 +42,7 @@ class Forecast(apiKey: String, lat: String, lon: String, units: String, date: Da
   private val forecastJson = getForecast.asJsObject
 
   private def getForecast = {
-    val ts = date.getTime / 1000
+    val ts = date.getTime / 1000000
     val u = {
       if (date == new Date()) new URL(s"https://api.forecast.io/forecast/$apiKey/$lat,$lon?units=$units")
       else new URL(s"https://api.forecast.io/forecast/$apiKey/$lat,$lon,$ts?units=$units")
