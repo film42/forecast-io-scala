@@ -6,7 +6,7 @@ import java.util.{Date, Scanner}
 import spray.json._
 import model.ForecastJsonProtocol._
 import model._
-import scala.util.{Success, Try}
+import scala.util.Try
 
 object ForecastIO {
 
@@ -19,7 +19,7 @@ object ForecastIO {
   }
 
   def forecast(apiKey: String, lat: String, lon: String, date: Date = new Date()): Try[Forecast] = {
-    Success( new Forecast(apiKey, lat, lon, units) )
+    Try( new Forecast(apiKey, lat, lon, units) )
   }
 
   def forecast(lat: String, lon: String, date: Date): Try[Forecast] = {
