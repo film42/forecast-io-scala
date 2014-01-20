@@ -7,6 +7,7 @@ import spray.json._
 import model.ForecastJsonProtocol._
 import model._
 import scala.util.Try
+import com.film42.forecastioapi.extras.LocationPoint
 
 case class ForecastIO(apiKey: String, units: String = "us") {
 
@@ -20,6 +21,10 @@ case class ForecastIO(apiKey: String, units: String = "us") {
 
   def forecast(lat: String, lon: String): Try[Forecast] = {
     forecast(apiKey, lat, lon)
+  }
+
+  def forecast(location: LocationPoint): Try[Forecast] = {
+    forecast(apiKey, location.lat, location.lon)
   }
 
 }

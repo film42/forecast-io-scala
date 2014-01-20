@@ -25,4 +25,14 @@ forecast.currently.summary //=> "Mostly Cloudy"
 val forecastIO = ForecastIO("my api key", "si")
 ```
 
+###Locations
+
+It's hard to just "know" the location points, so you can grab a location using the google maps API
+
+```scala
+val Success(location) = Location.search("salt lake city utah")
+val Success(forecast) = forecastIO.forecast(location)
+
+forecast.currently.apparentTemperature //=> "58.89"
+```
 
