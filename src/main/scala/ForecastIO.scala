@@ -8,15 +8,7 @@ import model.ForecastJsonProtocol._
 import model._
 import scala.util.Try
 
-object ForecastIO {
-
-  var apiKey: String = ""
-  var units: String = "us"
-
-  def init(apiKey: String, units: String = "us") = {
-    this.apiKey = apiKey
-    this.units = units
-  }
+case class ForecastIO(apiKey: String, units: String = "us") {
 
   def forecast(apiKey: String, lat: String, lon: String, date: Date = new Date()): Try[Forecast] = {
     Try( new Forecast(apiKey, lat, lon, units) )
