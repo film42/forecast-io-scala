@@ -22,7 +22,7 @@ forecast.currently.summary //=> "Mostly Cloudy"
 ###International
 
 ```scala
-val forecastIO = ForecastIO.init("my api key", "si")
+val forecastIO = ForecastIO("my api key", "si")
 ```
 
 
