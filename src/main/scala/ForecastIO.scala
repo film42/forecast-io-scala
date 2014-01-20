@@ -6,39 +6,45 @@ import java.util.{Date, Scanner}
 import spray.json._
 import model.ForecastJsonProtocol._
 import model._
+import scala.util.{Success, Try}
 
 object ForecastIO {
 
   var apiKey: String = ""
+  var units: String = "us"
 
-  def forecast(apiKey: String, lat: String, lon: String, date: Date = new Date()): Option[Forecast] = {
-    try Some(new Forecast(apiKey, lat, lon))
-    catch { case e: Exception => None }
+  def init(apiKey: String, units: String = "us") = {
+    this.apiKey = apiKey
+    this.units = units
   }
 
-  def forecast(lat: String, lon: String, date: Date): Option[Forecast] = {
+  def forecast(apiKey: String, lat: String, lon: String, date: Date = new Date()): Try[Forecast] = {
+    Success( new Forecast(apiKey, lat, lon, units) )
+  }
+
+  def forecast(lat: String, lon: String, date: Date): Try[Forecast] = {
     forecast(apiKey, lat, lon, date)
   }
 
-  def forecast(lat: String, lon: String): Option[Forecast] = {
+  def forecast(lat: String, lon: String): Try[Forecast] = {
     forecast(apiKey, lat, lon)
   }
 
 }
 
-class Forecast(apiKey: String, lat: String, lon: String, date: Date = new Date()) {
+class Forecast(apiKey: String, lat: String, lon: String, units: String, date: Date = new Date()) {
 
   // Timestamp constructor
-  def this(apiKey: String, lat: String, lon: String, timestamp: Int) =
-    this(apiKey, lat, lon, new Date(timestamp * 1000L))
+  def this(apiKey: String, lat: String, lon: String, units: String, timestamp: Int) =
+    this(apiKey, lat, lon, units, new Date(timestamp * 1000L))
 
   private val forecastJson = getForecast.asJsObject
 
   private def getForecast = {
     val ts = date.getTime / 1000
     val u = {
-      if (date == new Date()) new URL(s"https://api.forecast.io/forecast/$apiKey/$lat,$lon")
-      else new URL(s"https://api.forecast.io/forecast/$apiKey/$lat,$lon,$ts")
+      if (date == new Date()) new URL(s"https://api.forecast.io/forecast/$apiKey/$lat,$lon?units=$units")
+      else new URL(s"https://api.forecast.io/forecast/$apiKey/$lat,$lon,$ts?units=$units")
     }
     val s = new Scanner(u.openStream(), "UTF-8")
     try {
@@ -79,20 +85,22 @@ class Forecast(apiKey: String, lat: String, lon: String, date: Date = new Date()
   }
 
   def flags: Flags = {
+    // Use separate json parser until Case Class limit is lifted
     val jsonString = forecastJson.getFields("flags")(0).toJson.toString()
     val json = JsonObject.readFrom(jsonString)
     new Flags(json)
   }
 
   def daily: Daily = {
+    // Use separate json parser until Case Class limit is lifted
     val jsonString = forecastJson.getFields("daily")(0).toJson.toString()
     val json = JsonObject.readFrom(jsonString)
     new Daily(json)
   }
 
-  def alerts: List[Alert] = {
+  def alerts: Array[Alert] = {
     val size = forecastJson.getFields("alerts").size
-    if(size == 0) return List()
+    if(size == 0) return Array()
 
     val a = forecastJson.getFields("alerts")(0).convertTo[Alerts]
     a.alerts

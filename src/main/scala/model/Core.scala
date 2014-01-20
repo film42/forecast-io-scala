@@ -8,18 +8,18 @@ sealed trait DT { def datetime: Date }
 
 case class Alert(title: String, time: Int, expires: Int, description: String, uri: String)
   extends DT { def datetime = new Date(time * 1000L) }
-case class Alerts(alerts: List[Alert])
+case class Alerts(alerts: Array[Alert])
 
 case class MinuteDataPoint(time: Int, precipIntensity: Double, precipProbability: Double)
   extends DT { def datetime = new Date(time * 1000L) }
-case class Minutely(summary: String, icon: String, data: List[MinuteDataPoint])
+case class Minutely(summary: String, icon: String, data: Array[MinuteDataPoint])
 
 class Flags(json: JsonObject) {
   private def asStringArray(v: JsonValue) =
     v.asArray.values.toArray.map(x => x.toString)
 
   def sources: Array[String] = asStringArray( json.get("sources") )
-  def stations(source: String): Array[String] = {
+  def station(source: String): Array[String] = {
     try asStringArray( json.get(s"$source-stations") )
     catch { case e: Exception => Array() }
   }
@@ -65,7 +65,7 @@ case class HourDataPoint(
 case class Hourly(
   summary: String,
   icon: String,
-  data: List[HourDataPoint])
+  data: Array[HourDataPoint])
 
 
 /*
@@ -127,7 +127,7 @@ object ForecastJsonProtocol extends DefaultJsonProtocol {
 
   // Root is an Array
   implicit object AlertsApiResultsFormat extends RootJsonFormat[Alerts] {
-    def read(value: JsValue) = Alerts(value.convertTo[List[Alert]])
+    def read(value: JsValue) = Alerts(value.convertTo[Array[Alert]])
     def write(obj: Alerts) = obj.alerts.toJson
   }
 }
