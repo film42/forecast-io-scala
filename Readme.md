@@ -38,7 +38,7 @@ forecast.currently.apparentTemperature //=> "58.89"
 
 ###Dates
 
-You can also get a forecast from a prior date.
+You can also get a forecast from a prior or future date.
 
 ```scala
 val date = new Date(1265076122 * 1000L) //=> Feb 2, 2010
