@@ -36,3 +36,12 @@ val Success(forecast) = forecastIO.forecast(location)
 forecast.currently.apparentTemperature //=> "58.89"
 ```
 
+###Dates
+
+You can also get a forecast from a prior date.
+
+```scala
+val date = new Date(1265076122 * 1000L) //=> Feb 2, 2010
+val Success(forecast) = forecastIO.forecast("45.157778", "-93.226944", date)
+```
+
