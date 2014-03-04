@@ -42,7 +42,7 @@ class Forecast(apiKey: String, lat: String, lon: String, units: String, date: Da
   private val forecastJson = getForecast.asJsObject
 
   private def getForecast = {
-    val ts = date.getTime / 1000000
+    val ts = date.getTime / 1000
     val u = {
       if (date == new Date()) new URL(s"https://api.forecast.io/forecast/$apiKey/$lat,$lon?units=$units")
       else new URL(s"https://api.forecast.io/forecast/$apiKey/$lat,$lon,$ts?units=$units")
