@@ -4,14 +4,17 @@ import spray.json._
 import com.eclipsesource.json._
 import java.util.Date
 
-sealed trait DT { def datetime: Date }
+trait DT {
+  val time: Int
+  def datetime: Date = new Date(time * 1000L)
+}
 
 case class Alert(title: String, time: Int, expires: Int, description: String, uri: String)
-  extends DT { def datetime = new Date(time * 1000L) }
+  extends DT
 case class Alerts(alerts: Array[Alert])
 
 case class MinuteDataPoint(time: Int, precipIntensity: Double, precipProbability: Double)
-  extends DT { def datetime = new Date(time * 1000L) }
+  extends DT
 case class Minutely(summary: String, icon: String, data: Array[MinuteDataPoint])
 
 class Flags(json: JsonObject) {
@@ -43,7 +46,7 @@ case class CurrentDataPoint(
   visibility: Double,
   cloudCover: Double,
   pressure: Double,
-  ozone: Option[Double]) extends DT { def datetime = new Date(time * 1000L) }
+  ozone: Option[Double]) extends DT
 
 case class HourDataPoint(
   time: Int,
@@ -60,7 +63,7 @@ case class HourDataPoint(
   visibility: Double,
   cloudCover: Double,
   pressure: Double,
-  ozone: Double) extends DT { def datetime = new Date(time * 1000L) }
+  ozone: Double) extends DT
 
 case class Hourly(
   summary: String,
@@ -84,7 +87,7 @@ class Daily(json: JsonObject) {
   }
 }
 
-class DayDataPoint(json: JsonObject) extends DT {
+class DayDataPoint(json: JsonObject) {
   def time: Int = json.get("time").asInt
   def datetime = new Date(time * 1000L)
   def summary: String  = json.get("summary").asString
