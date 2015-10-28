@@ -4,6 +4,8 @@ import spray.json._
 import com.eclipsesource.json._
 import java.util.Date
 
+import scala.util.Try
+
 sealed trait DT { def datetime: Date }
 
 case class Alert(title: String, time: Int, expires: Int, description: String, uri: String)
@@ -40,7 +42,7 @@ case class CurrentDataPoint(
   humidity: Double,
   windSpeed: Double,
   windBearing: Double,
-  visibility: Double,
+  visibility: Option[Double],
   cloudCover: Double,
   pressure: Double,
   ozone: Option[Double]) extends DT { def datetime = new Date(time * 1000L) }
@@ -57,7 +59,7 @@ case class HourDataPoint(
   humidity: Double,
   windSpeed: Double,
   windBearing: Double,
-  visibility: Double,
+  visibility: Option[Double],
   cloudCover: Double,
   pressure: Double,
   ozone: Double) extends DT { def datetime = new Date(time * 1000L) }
@@ -111,7 +113,7 @@ class DayDataPoint(json: JsonObject) extends DT {
   def humidity: Double = json.get("humidity").asDouble
   def windSpeed: Double = json.get("windSpeed").asDouble
   def windBearing: Double = json.get("windBearing").asDouble
-  def visibility: Double = json.get("visibility").asDouble
+  def visibility: Option[Double] = Try(json.get("visibility").asDouble).toOption
   def cloudCover: Double = json.get("cloudCover").asDouble
   def pressure: Double = json.get("pressure").asDouble
   def ozone: Double = json.get("ozone").asDouble
