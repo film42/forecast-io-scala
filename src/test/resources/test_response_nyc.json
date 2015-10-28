@@ -460,6 +460,22 @@
     "icon": "clear-day",
     "summary": "Clear throughout the day."
   },
+  "minutely": {
+    "data": [
+      {
+        "precipIntensity": 0,
+        "precipProbability": 0,
+        "time": 1439316000
+      },
+      {
+        "precipIntensity": 0,
+        "precipProbability": 0,
+        "time": 1439316060
+      }
+    ],
+    "icon": "clear-day",
+    "summary": "Clear throughout the day."
+  },
   "latitude": 40.7127,
   "longitude": 74.0059,
   "offset": 6,

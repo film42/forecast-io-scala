@@ -111,9 +111,9 @@ class ForecastIOSpec extends FunSpec {
       assert(forecastJson.getFields("currently")(0).convertTo[CurrentDataPoint] != null)
     }
 
-    // it("parses Minutely") {
-    //   assert(forecastJson.getFields("minutely")(0).convertTo[Minutely] != null)
-    // }
+    it("parses Minutely") {
+      assert(forecastJson.getFields("minutely")(0).convertTo[Minutely] != null)
+    }
 
     it("parses Hourly") {
       assert(forecastJson.getFields("hourly")(0).convertTo[Hourly] != null)
@@ -135,4 +135,3 @@ class ForecastIOSpec extends FunSpec {
 
   }
 }
-
